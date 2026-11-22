@@ -1,0 +1,291 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import {
+  getCanonicalUrl,
+  getLocaleConfig,
+  SITE_URL,
+  SUPPORTED_LOCALES,
+  type LocaleCode,
+  type PageRouteKey,
+} from '../i18n/locales';
+import type { TranslationBundle } from '../i18n/translations';
+
+interface Props {
+  locale: LocaleCode;
+  routeKey: PageRouteKey;
+  title: string;
+  description: string;
+  t: TranslationBundle;
+  schemas?: Array<Record<string, unknown>>;
+}
+
+const { locale, routeKey, title, description, t, schemas = [] } = Astro.props;
+
+const localeConfig = getLocaleConfig(locale);
+const canonicalUrl = getCanonicalUrl(locale, routeKey);
+const xDefaultUrl = getCanonicalUrl('en', routeKey);
+const ogImageUrl = `${SITE_URL}/og-image.png`;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Anti-FOUC theme initialization -->
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          var prefersDark =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = saved ? saved === 'dark' : prefersDark;
+          document.documentElement.classList.toggle('dark', isDark);
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Primary SEO Metadata -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Hreflang Alternates (8 languages + x-default) -->
+    {SUPPORTED_LOCALES.map((loc) => (
+      <link rel="alternate" hreflang={loc.code} href={getCanonicalUrl(loc.code, routeKey)} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CompressImg" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={localeConfig.ogLocale} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.seo.ogImageAlt} />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- PWA & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#FFC7C7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="CompressImg" />
+
+    <!-- Structured Data (JSON-LD) -->
+    {schemas.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+
+    <!-- Google Tag Manager & GA4 -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-W7WLXX2F"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DL758Z22KR');
+    </script>
+  </head>
+
+  <body class="bg-page text-ink antialiased selection:bg-[#FFC7C7] selection:text-[#242236]">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W7WLXX2F" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-[#FFC7C7] focus:px-4 focus:py-2 focus:font-bold focus:text-[#242236]"
+    >
+      Skip to main content
+    </a>
+
+    <Navbar locale={locale} routeKey={routeKey} t={t} />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer locale={locale} routeKey={routeKey} t={t} />
+
+    <!-- Lightweight zero-bundle shell controls: Theme, Language Dropdown, Offline PWA Install & SW -->
+    <script is:inline>
+      (function () {
+        // 1. Theme toggle sync
+        function syncThemeButtons() {
+          var isDark = document.documentElement.classList.contains('dark');
+          document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+            btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+          });
+        }
+        syncThemeButtons();
+
+        document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var nextDark = !document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', nextDark);
+            try {
+              localStorage.setItem('theme', nextDark ? 'dark' : 'light');
+            } catch (e) {}
+            syncThemeButtons();
+          });
+        });
+
+        // 2. Navigation & Language popover menus
+        var popovers = document.querySelectorAll('[data-nav-popover]');
+        function closeAllPopovers() {
+          popovers.forEach(function (dd) {
+            var menu = dd.querySelector('[data-popover-menu]');
+            var trigger = dd.querySelector('[data-popover-trigger]');
+            if (menu) menu.classList.add('hidden');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+          });
+        }
+        popovers.forEach(function (dd) {
+          var trigger = dd.querySelector('[data-popover-trigger]');
+          var menu = dd.querySelector('[data-popover-menu]');
+          if (!trigger || !menu) return;
+          trigger.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            var isHidden = menu.classList.contains('hidden');
+            closeAllPopovers();
+            if (isHidden) {
+              menu.classList.remove('hidden');
+              trigger.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+        document.addEventListener('click', closeAllPopovers);
+        document.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Escape') {
+            closeAllPopovers();
+            closePwaModal();
+          }
+        });
+
+        // 3. Offline PWA installation & Service Worker
+        var deferredInstallPrompt = null;
+        var pwaModal = document.getElementById('pwa-guide-modal');
+        var iosSteps = pwaModal ? pwaModal.querySelector('[data-pwa-ios-steps]') : null;
+        var genericStep = pwaModal ? pwaModal.querySelector('[data-pwa-generic-step]') : null;
+
+        function isStandalone() {
+          return (
+            (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+            window.navigator.standalone === true
+          );
+        }
+
+        function updateInstallButtons(installed) {
+          document.querySelectorAll('[data-pwa-label]').forEach(function (el) {
+            var text = installed ? el.getAttribute('data-installed-label') : el.getAttribute('data-default-label');
+            if (text) el.textContent = text;
+          });
+        }
+        if (isStandalone()) {
+          updateInstallButtons(true);
+        }
+
+        function openPwaModal() {
+          if (!pwaModal) return;
+          var ua = navigator.userAgent || '';
+          var isIos = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+          if (iosSteps && genericStep) {
+            iosSteps.classList.toggle('hidden', !isIos);
+            genericStep.classList.toggle('hidden', isIos);
+          }
+          pwaModal.classList.remove('hidden');
+        }
+
+        function closePwaModal() {
+          if (pwaModal) pwaModal.classList.add('hidden');
+        }
+
+        if (pwaModal) {
+          pwaModal.querySelectorAll('[data-pwa-modal-close]').forEach(function (btn) {
+            btn.addEventListener('click', closePwaModal);
+          });
+          pwaModal.addEventListener('click', function (ev) {
+            if (ev.target === pwaModal) closePwaModal();
+          });
+        }
+
+        window.addEventListener('beforeinstallprompt', function (e) {
+          e.preventDefault();
+          deferredInstallPrompt = e;
+        });
+
+        window.addEventListener('appinstalled', function () {
+          deferredInstallPrompt = null;
+          updateInstallButtons(true);
+        });
+
+        document.querySelectorAll('[data-pwa-install]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (deferredInstallPrompt) {
+              deferredInstallPrompt.prompt();
+              deferredInstallPrompt.userChoice.then(function (choice) {
+                if (choice && choice.outcome === 'accepted') {
+                  updateInstallButtons(true);
+                }
+                deferredInstallPrompt = null;
+              }).catch(function () {});
+            } else {
+              openPwaModal();
+            }
+          });
+        });
+
+        // Register Service Worker and pre-cache loaded page bundles
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker
+              .register('/sw.js')
+              .then(function (reg) {
+                function sendLoadedAssets(worker) {
+                  if (!worker) return;
+                  try {
+                    var urls = new Set([window.location.pathname]);
+                    document.querySelectorAll('script[src], link[rel="stylesheet"][href], link[rel="modulepreload"][href]').forEach(function (node) {
+                      var raw = node.getAttribute('src') || node.getAttribute('href');
+                      if (raw && raw.startsWith('/')) urls.add(raw);
+                    });
+                    if (performance && performance.getEntriesByType) {
+                      performance.getEntriesByType('resource').forEach(function (entry) {
+                        try {
+                          var u = new URL(entry.name);
+                          if (u.origin === window.location.origin && u.pathname.startsWith('/_astro/')) {
+                            urls.add(u.pathname);
+                          }
+                        } catch (e) {}
+                      });
+                    }
+                    worker.postMessage({ type: 'CACHE_URLS', urls: Array.from(urls) });
+                  } catch (e) {}
+                }
+
+                if (reg.active) {
+                  setTimeout(function () { sendLoadedAssets(reg.active); }, 800);
+                }
+                navigator.serviceWorker.ready.then(function (readyReg) {
+                  setTimeout(function () { sendLoadedAssets(readyReg.active); }, 1000);
+                });
+              })
+              .catch(function () {});
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

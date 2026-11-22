@@ -1,0 +1,26 @@
+---
+interface Props {
+  homeLabel: string;
+  homeHref: string;
+  currentLabel: string;
+}
+
+const { homeLabel, homeHref, currentLabel } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="mb-5">
+  <ol class="flex flex-wrap items-center gap-2 text-sm font-medium text-inkmuted">
+    <li>
+      <a
+        href={homeHref}
+        class="inline-flex items-center gap-1.5 rounded-md py-1 text-inkmuted hover:text-ink underline-offset-4 hover:underline transition-colors"
+      >
+        {homeLabel}
+      </a>
+    </li>
+    <li aria-hidden="true" class="text-slateink select-none">/</li>
+    <li aria-current="page" class="font-semibold text-ink">
+      {currentLabel}
+    </li>
+  </ol>
+</nav>

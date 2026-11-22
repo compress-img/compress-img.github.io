@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ImageCompressorIsland } from '../../components/ImageCompressorIsland';
+import {
+  getCanonicalUrl,
+  getLocaleStaticPaths,
+  resolveLocaleParam,
+} from '../../i18n/locales';
+import { TRANSLATIONS } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const locale = resolveLocaleParam(Astro.params.lang);
+const t = TRANSLATIONS[locale];
+const canonicalUrl = getCanonicalUrl(locale, 'home');
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'CompressImg',
+  url: canonicalUrl,
+  inLanguage: locale,
+  description: t.seo.homeDescription,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript, HTML5 Canvas, and Web Workers',
+  isAccessibleForFree: true,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    'Local client-side HTML5 Canvas and Web Worker image compression',
+    'Exact KB target presets (20KB, 50KB, 100KB, 200KB, custom KB)',
+    'Supports JPG/JPEG, PNG, WebP, GIF, and SVG formats',
+    'Interactive Before and After split comparison preview',
+    'Batch image optimization and client-side ZIP download',
+    'Offline Progressive Web App (PWA) support',
+  ],
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: locale,
+  mainEntity: t.home.faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+---
+
+<BaseLayout
+  locale={locale}
+  routeKey="home"
+  title={t.seo.homeTitle}
+  description={t.seo.homeDescription}
+  t={t}
+  schemas={[webAppSchema, faqSchema]}
+>
+  <!-- Above-the-fold Hero Workspace -->
+  <section class="mx-auto max-w-6xl px-4 pt-8 pb-10 sm:px-6 sm:pt-12 sm:pb-14">
+    <div class="mx-auto max-w-3xl text-center mb-7 sm:mb-9">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-[1.15]">
+        {t.home.h1}
+      </h1>
+      <p class="mt-3.5 text-base sm:text-lg text-inkmuted leading-relaxed">
+        {t.home.subtitle}
+      </p>
+    </div>
+
+    <ImageCompressorIsland
+      client:load
+      t={t.compressor}
+      privacyNote={t.home.privacyNote}
+    />
+  </section>
+
+  <!-- Below-the-fold Natural FAQ Section -->
+  <section aria-labelledby="faq-heading" class="mx-auto max-w-5xl px-4 pb-16 pt-4 sm:px-6">
+    <h2 id="faq-heading" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink text-center mb-8">
+      {t.home.faqHeading}
+    </h2>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      {t.home.faqs.map((faq) => (
+        <article class="rounded-3xl border border-line bg-card p-6 shadow-soft">
+          <h3 class="text-base sm:text-lg font-bold text-ink leading-snug">
+            {faq.question}
+          </h3>
+          <p class="mt-2.5 text-sm sm:text-base text-inkmuted leading-relaxed">
+            {faq.answer}
+          </p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

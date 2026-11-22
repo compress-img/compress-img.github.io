@@ -1,0 +1,209 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import {
+  getCanonicalUrl,
+  getLocalizedPath,
+  getLocaleStaticPaths,
+  resolveLocaleParam,
+} from '../../i18n/locales';
+import { TRANSLATIONS } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const locale = resolveLocaleParam(Astro.params.lang);
+const t = TRANSLATIONS[locale];
+const homeCanonical = getCanonicalUrl(locale, 'home');
+const canonicalUrl = getCanonicalUrl(locale, 'hireMe');
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: t.nav.home,
+      item: homeCanonical,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: t.hireMe.breadcrumbCurrent,
+      item: canonicalUrl,
+    },
+  ],
+};
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Kishara Dilshan',
+  jobTitle: 'Web & WebAssembly Developer',
+  email: 'mailto:kisharadilshan007@gmail.com',
+  url: canonicalUrl,
+  sameAs: [
+    'https://github.com/compress-img/compress-img.github.io',
+    'https://kisharadilshan.gumroad.com/coffee',
+  ],
+  knowsAbout: [
+    'Astro',
+    'React',
+    'Next.js',
+    'TypeScript',
+    'WebAssembly (WASM)',
+    'Technical SEO',
+    'UI/UX Design',
+  ],
+};
+---
+
+<BaseLayout
+  locale={locale}
+  routeKey="hireMe"
+  title={t.seo.hireMeTitle}
+  description={t.seo.hireMeDescription}
+  t={t}
+  schemas={[breadcrumbSchema, personSchema]}
+>
+  <article class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+    <Breadcrumbs
+      homeLabel={t.nav.home}
+      homeHref={getLocalizedPath(locale, 'home')}
+      currentLabel={t.hireMe.breadcrumbCurrent}
+    />
+
+    <header class="mb-9">
+      <h1 class="inline-flex items-center gap-2 rounded-full bg-[#FFE2E2] px-4 py-1.5 text-sm font-extrabold text-[#242236] border border-[#EAD6D6]">
+        <span class="h-2.5 w-2.5 rounded-full bg-[#242236]" aria-hidden="true"></span>
+        <span>{t.hireMe.badge}</span>
+      </h1>
+
+      <h2 class="mt-4 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-tight">
+        {t.hireMe.heading}
+      </h2>
+
+      <p class="mt-4 text-lg font-bold text-ink">
+        {t.hireMe.intro}
+      </p>
+      <p class="mt-2.5 text-base sm:text-lg text-inkmuted leading-relaxed">
+        {t.hireMe.subcopy}
+      </p>
+    </header>
+
+    <section aria-label="Areas of expertise" class="grid gap-4 md:grid-cols-3 mb-10">
+      {t.hireMe.specialties.map((item, idx) => (
+        <div class="rounded-3xl border border-line bg-card p-6 shadow-soft flex flex-col">
+          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFC7C7] text-[#242236] font-extrabold">
+            {idx === 0 && (
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            )}
+            {idx === 1 && (
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 9h6v6H9z" />
+                <path d="M9 1v2M15 1v2M9 21v2M15 21v2M21 9h2M21 15h2M1 9h2M1 15h2" />
+              </svg>
+            )}
+            {idx === 2 && (
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="18" height="18" x="3" y="3" rx="3" />
+                <path d="M3 9h18" />
+                <path d="M9 21V9" />
+              </svg>
+            )}
+          </div>
+          <h3 class="text-base sm:text-lg font-bold text-ink leading-snug">
+            {item.title}
+          </h3>
+          <p class="mt-2.5 text-sm text-inkmuted leading-relaxed">
+            {item.description}
+          </p>
+        </div>
+      ))}
+    </section>
+
+    <section aria-labelledby="hire-cta-heading" class="rounded-3xl border border-line bg-card p-6 sm:p-8 shadow-soft">
+      <h2 id="hire-cta-heading" class="text-2xl sm:text-3xl font-extrabold text-ink">
+        {t.hireMe.ctaHeading}
+      </h2>
+
+      <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-line bg-page p-4">
+        <a
+          href={`mailto:${t.hireMe.email}`}
+          class="text-base font-bold text-ink hover:underline underline-offset-4 break-all"
+        >
+          {t.hireMe.emailLabel}
+        </a>
+
+        <button
+          type="button"
+          id="copy-email-btn"
+          data-email={t.hireMe.email}
+          data-default-text={t.hireMe.copyButton}
+          data-copied-text={t.hireMe.copiedButton}
+          data-copied-announcement={t.hireMe.copiedAnnouncement}
+          class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FFC7C7] px-5 py-2.5 text-sm font-extrabold text-[#242236] hover:bg-[#F5B0B0] spring-hover"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+          </svg>
+          <span id="copy-email-label">{t.hireMe.copyButton}</span>
+        </button>
+      </div>
+
+      <p id="copy-email-status" class="sr-only" aria-live="polite"></p>
+    </section>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('copy-email-btn');
+      var label = document.getElementById('copy-email-label');
+      var status = document.getElementById('copy-email-status');
+      if (!btn || !label) return;
+
+      var timer = null;
+      btn.addEventListener('click', function () {
+        var email = btn.getAttribute('data-email') || 'kisharadilshan007@gmail.com';
+        var defaultText = btn.getAttribute('data-default-text') || 'Copy Email';
+        var copiedText = btn.getAttribute('data-copied-text') || 'Copied!';
+        var announcement = btn.getAttribute('data-copied-announcement') || email;
+
+        function onCopied() {
+          label.textContent = copiedText;
+          if (status) status.textContent = announcement;
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(function () {
+            label.textContent = defaultText;
+          }, 2200);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email).then(onCopied).catch(function () {
+            var input = document.createElement('input');
+            input.value = email;
+            document.body.appendChild(input);
+            input.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(input);
+            onCopied();
+          });
+        } else {
+          var input = document.createElement('input');
+          input.value = email;
+          document.body.appendChild(input);
+          input.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          document.body.removeChild(input);
+          onCopied();
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,491 @@
+---
+import { getLocalizedPath, SUPPORTED_LOCALES, type LocaleCode, type PageRouteKey } from '../i18n/locales';
+import type { TranslationBundle } from '../i18n/translations';
+
+interface Props {
+  locale: LocaleCode;
+  routeKey: PageRouteKey;
+  t: TranslationBundle;
+}
+
+const { locale, routeKey, t } = Astro.props;
+
+const homeHref = getLocalizedPath(locale, 'home');
+const howToHref = getLocalizedPath(locale, 'howToUse');
+const hireMeHref = getLocalizedPath(locale, 'hireMe');
+const currentLangUpper = locale.toUpperCase();
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-card shadow-[0_1px_12px_rgba(36,34,54,0.04)]">
+  <div class="mx-auto max-w-6xl px-3 py-2.5 sm:px-6">
+    <!-- Desktop Header (>= 1024px) -->
+    <div class="hidden lg:flex items-center justify-between gap-4">
+      <a
+        href={homeHref}
+        class="flex items-center gap-2.5 rounded-xl px-2 py-1.5 font-extrabold text-lg tracking-tight text-ink spring-hover"
+      >
+        <svg width="32" height="32" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#FFC7C7" />
+          <rect x="6" y="6" width="52" height="52" rx="12" fill="#FFFFFF" stroke="#242236" stroke-width="2.5" />
+          <rect x="16" y="16" width="32" height="32" rx="6" fill="#FFE2E2" stroke="#242236" stroke-width="2.5" />
+          <circle cx="25" cy="25" r="3" fill="#242236" />
+          <path d="M18 41L26.5 32.5C27.3 31.7 28.6 31.7 29.4 32.5L34 37L38.5 32.5C39.3 31.7 40.6 31.7 41.4 32.5L46 37V42C46 43.1 45.1 44 44 44H20C18.9 44 18 43.1 18 42V41Z" fill="#8785A2" />
+          <path d="M10 10L16 16M16 16H11.5M16 16V11.5" stroke="#242236" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M54 54L48 48M48 48H52.5M48 48V52.5" stroke="#242236" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>{t.nav.brandName}</span>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <!-- Language Dropdown (Desktop) -->
+        <div class="relative" data-nav-popover>
+          <button
+            type="button"
+            data-popover-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label={t.nav.languageAriaLabel}
+            class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-line bg-page px-3 text-sm font-semibold text-ink hover:bg-subtle spring-transition"
+          >
+            <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span>{currentLangUpper}</span>
+            <svg class="h-3.5 w-3.5 opacity-75" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <div
+            data-popover-menu
+            role="menu"
+            aria-label={t.nav.languageAriaLabel}
+            class="hidden absolute right-0 mt-2 w-44 rounded-2xl border border-line bg-card p-1.5 shadow-soft z-50"
+          >
+            {SUPPORTED_LOCALES.map((loc) => (
+              <a
+                href={getLocalizedPath(loc.code, routeKey)}
+                lang={loc.code}
+                role="menuitem"
+                class:list={[
+                  'flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium transition-colors',
+                  loc.code === locale
+                    ? 'bg-[#FFC7C7] font-bold text-[#242236]'
+                    : 'text-ink hover:bg-subtle',
+                ]}
+              >
+                <span>{loc.label}</span>
+                <span class="text-xs uppercase opacity-75">{loc.code}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- Theme Toggle (Desktop) -->
+        <button
+          type="button"
+          data-theme-toggle
+          aria-label={t.nav.themeToggleAriaLabel}
+          aria-pressed="false"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+        >
+          <svg data-icon-sun class="hidden dark:block h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg data-icon-moon class="block dark:hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+
+        <!-- Support the Developer (Desktop) -->
+        <a
+          href="https://kisharadilshan.gumroad.com/coffee"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.nav.supportDeveloperAriaLabel}
+          class="inline-flex h-10 items-center gap-1.5 rounded-xl bg-[#FFC7C7] px-3.5 text-sm font-bold text-[#242236] hover:bg-[#F5B0B0] spring-hover shadow-sm"
+        >
+          <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+            <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+            <line x1="6" x2="6" y1="2" y2="4" />
+            <line x1="10" x2="10" y1="2" y2="4" />
+            <line x1="14" x2="14" y1="2" y2="4" />
+          </svg>
+          <span>{t.nav.supportDeveloper}</span>
+        </a>
+
+        <!-- GitHub Icon-Only Link (Desktop) -->
+        <a
+          href="https://github.com/compress-img/compress-img.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View source code on GitHub"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+        </a>
+
+        <!-- Toggle Icon Menu for Navigation Links + PWA Install (Desktop) -->
+        <div class="relative" data-nav-popover>
+          <button
+            type="button"
+            data-popover-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label={t.nav.menuAriaLabel}
+            class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+          >
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+
+          <nav
+            data-popover-menu
+            aria-label="Site links menu"
+            class="hidden absolute right-0 mt-2 w-60 rounded-2xl border border-line bg-card p-2 shadow-soft z-50 animate-fade-up"
+          >
+            <a
+              href={homeHref}
+              aria-current={routeKey === 'home' ? 'page' : undefined}
+              class:list={[
+                'flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold spring-transition',
+                routeKey === 'home'
+                  ? 'bg-[#FFC7C7] text-[#242236] font-bold shadow-sm'
+                  : 'text-ink hover:bg-subtle',
+              ]}
+            >
+              <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="4" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+              <span>{t.nav.home}</span>
+            </a>
+
+            <a
+              href={howToHref}
+              aria-current={routeKey === 'howToUse' ? 'page' : undefined}
+              class:list={[
+                'mt-1 flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold spring-transition',
+                routeKey === 'howToUse'
+                  ? 'bg-[#FFC7C7] text-[#242236] font-bold shadow-sm'
+                  : 'text-ink hover:bg-subtle',
+              ]}
+            >
+              <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+              <span>{t.nav.howToUse}</span>
+            </a>
+
+            <a
+              href={hireMeHref}
+              aria-current={routeKey === 'hireMe' ? 'page' : undefined}
+              class:list={[
+                'mt-1 flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold spring-transition',
+                routeKey === 'hireMe'
+                  ? 'bg-[#FFC7C7] text-[#242236] font-bold shadow-sm'
+                  : 'text-ink hover:bg-subtle',
+              ]}
+            >
+              <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+              </svg>
+              <span>{t.nav.hireMe}</span>
+            </a>
+
+            <div class="my-2 border-t border-line" role="separator"></div>
+
+            <button
+              type="button"
+              data-pwa-install
+              aria-label={t.nav.installAppAriaLabel}
+              class="flex w-full items-center gap-3 rounded-xl bg-subtle px-3.5 py-2.5 text-left text-sm font-bold text-ink hover:bg-[#FFC7C7] hover:text-[#242236] spring-transition"
+            >
+              <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                <path d="M12 8v6m0 0-2.5-2.5M12 14l2.5-2.5" />
+              </svg>
+              <span data-pwa-label data-default-label={t.nav.installApp} data-installed-label={t.nav.installedLabel}>
+                {t.nav.installApp}
+              </span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile & Tablet Icon-Only Bar (< 1024px, >= 48x48px touch targets) -->
+    <div class="flex lg:hidden items-center justify-between gap-1.5">
+      <a
+        href={homeHref}
+        aria-label={t.nav.home}
+        aria-current={routeKey === 'home' ? 'page' : undefined}
+        class:list={[
+          'inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border spring-transition',
+          routeKey === 'home'
+            ? 'bg-[#FFC7C7] text-[#242236] border-[#242236]/20 shadow-sm'
+            : 'bg-page text-ink border-line hover:bg-subtle',
+        ]}
+      >
+        <svg class="h-6 w-6" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#FFC7C7" />
+          <rect x="6" y="6" width="52" height="52" rx="12" fill="#FFFFFF" stroke="#242236" stroke-width="2.5" />
+          <rect x="16" y="16" width="32" height="32" rx="6" fill="#FFE2E2" stroke="#242236" stroke-width="2.5" />
+          <circle cx="25" cy="25" r="3" fill="#242236" />
+          <path d="M18 41L26.5 32.5C27.3 31.7 28.6 31.7 29.4 32.5L34 37L38.5 32.5C39.3 31.7 40.6 31.7 41.4 32.5L46 37V42C46 43.1 45.1 44 44 44H20C18.9 44 18 43.1 18 42V41Z" fill="#8785A2" />
+        </svg>
+      </a>
+
+      <div class="flex items-center gap-1.5">
+        <!-- Language Dropdown (Mobile/Tablet) -->
+        <div class="relative" data-nav-popover>
+          <button
+            type="button"
+            data-popover-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label={t.nav.languageAriaLabel}
+            class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+          >
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+          </button>
+          <div
+            data-popover-menu
+            role="menu"
+            aria-label={t.nav.languageAriaLabel}
+            class="hidden absolute right-0 mt-2 w-44 rounded-2xl border border-line bg-card p-1.5 shadow-soft z-50"
+          >
+            {SUPPORTED_LOCALES.map((loc) => (
+              <a
+                href={getLocalizedPath(loc.code, routeKey)}
+                lang={loc.code}
+                role="menuitem"
+                class:list={[
+                  'flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium transition-colors',
+                  loc.code === locale
+                    ? 'bg-[#FFC7C7] font-bold text-[#242236]'
+                    : 'text-ink hover:bg-subtle',
+                ]}
+              >
+                <span>{loc.label}</span>
+                <span class="text-xs uppercase opacity-75">{loc.code}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- Theme Toggle (Mobile/Tablet) -->
+        <button
+          type="button"
+          data-theme-toggle
+          aria-label={t.nav.themeToggleAriaLabel}
+          aria-pressed="false"
+          class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+        >
+          <svg data-icon-sun class="hidden dark:block h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg data-icon-moon class="block dark:hidden h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+
+        <!-- Support Developer Icon (Mobile/Tablet) -->
+        <a
+          href="https://kisharadilshan.gumroad.com/coffee"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.nav.supportDeveloperAriaLabel}
+          class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl bg-[#FFC7C7] text-[#242236] border border-[#242236]/15 hover:bg-[#F5B0B0] spring-transition shadow-sm"
+        >
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+            <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+            <line x1="6" x2="6" y1="2" y2="4" />
+            <line x1="10" x2="10" y1="2" y2="4" />
+            <line x1="14" x2="14" y1="2" y2="4" />
+          </svg>
+        </a>
+
+        <!-- GitHub Icon-Only Link (Mobile/Tablet) -->
+        <a
+          href="https://github.com/compress-img/compress-img.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View source code on GitHub"
+          class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+        >
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+        </a>
+
+        <!-- Toggle Icon Menu (Mobile/Tablet, >= 48x48px) -->
+        <div class="relative" data-nav-popover>
+          <button
+            type="button"
+            data-popover-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label={t.nav.menuAriaLabel}
+            class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border border-line bg-page text-ink hover:bg-subtle spring-transition"
+          >
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+
+          <nav
+            data-popover-menu
+            aria-label="Mobile site links menu"
+            class="hidden absolute right-0 mt-2 w-60 rounded-2xl border border-line bg-card p-2 shadow-soft z-50 animate-fade-up"
+          >
+            <a
+              href={homeHref}
+              aria-current={routeKey === 'home' ? 'page' : undefined}
+              class:list={[
+                'flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold spring-transition',
+                routeKey === 'home'
+                  ? 'bg-[#FFC7C7] text-[#242236] font-bold shadow-sm'
+                  : 'text-ink hover:bg-subtle',
+              ]}
+            >
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="4" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+              <span>{t.nav.home}</span>
+            </a>
+
+            <a
+              href={howToHref}
+              aria-current={routeKey === 'howToUse' ? 'page' : undefined}
+              class:list={[
+                'mt-1 flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold spring-transition',
+                routeKey === 'howToUse'
+                  ? 'bg-[#FFC7C7] text-[#242236] font-bold shadow-sm'
+                  : 'text-ink hover:bg-subtle',
+              ]}
+            >
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+              <span>{t.nav.howToUse}</span>
+            </a>
+
+            <a
+              href={hireMeHref}
+              aria-current={routeKey === 'hireMe' ? 'page' : undefined}
+              class:list={[
+                'mt-1 flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold spring-transition',
+                routeKey === 'hireMe'
+                  ? 'bg-[#FFC7C7] text-[#242236] font-bold shadow-sm'
+                  : 'text-ink hover:bg-subtle',
+              ]}
+            >
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+              </svg>
+              <span>{t.nav.hireMe}</span>
+            </a>
+
+            <div class="my-2 border-t border-line" role="separator"></div>
+
+            <button
+              type="button"
+              data-pwa-install
+              aria-label={t.nav.installAppAriaLabel}
+              class="flex w-full items-center gap-3 rounded-xl bg-subtle px-3.5 py-3 text-left text-sm font-bold text-ink hover:bg-[#FFC7C7] hover:text-[#242236] spring-transition"
+            >
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                <path d="M12 8v6m0 0-2.5-2.5M12 14l2.5-2.5" />
+              </svg>
+              <span data-pwa-label data-default-label={t.nav.installApp} data-installed-label={t.nav.installedLabel}>
+                {t.nav.installApp}
+              </span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PWA Install Helper Popover (for iOS Safari / browsers without native prompt) -->
+<div
+  id="pwa-guide-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pwa-guide-title"
+  class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+>
+  <div class="w-full max-w-md rounded-3xl border border-line bg-card p-6 shadow-soft animate-fade-up">
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFC7C7] text-[#242236]">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+            <path d="M12 8v6m0 0-2.5-2.5M12 14l2.5-2.5" />
+          </svg>
+        </span>
+        <h2 id="pwa-guide-title" class="text-lg font-bold text-ink">{t.nav.iosModalTitle}</h2>
+      </div>
+      <button
+        type="button"
+        data-pwa-modal-close
+        aria-label={t.nav.closeModal}
+        class="inline-flex h-10 w-10 items-center justify-center rounded-xl text-inkmuted hover:bg-subtle hover:text-ink"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <p class="mt-3 text-sm leading-relaxed text-inkmuted">{t.nav.iosModalBody}</p>
+
+    <ol data-pwa-ios-steps class="mt-4 space-y-2.5 rounded-2xl bg-page p-4 text-sm text-ink border border-line">
+      <li class="flex gap-2.5"><span class="font-bold text-slateink">1.</span><span>{t.nav.iosModalStep1}</span></li>
+      <li class="flex gap-2.5"><span class="font-bold text-slateink">2.</span><span>{t.nav.iosModalStep2}</span></li>
+      <li class="flex gap-2.5"><span class="font-bold text-slateink">3.</span><span>{t.nav.iosModalStep3}</span></li>
+    </ol>
+
+    <p data-pwa-generic-step class="hidden mt-4 rounded-2xl bg-page p-4 text-sm text-ink border border-line">
+      {t.nav.browserModalBody}
+    </p>
+
+    <div class="mt-5 flex justify-end">
+      <button
+        type="button"
+        data-pwa-modal-close
+        class="rounded-xl bg-[#FFC7C7] px-5 py-2.5 text-sm font-bold text-[#242236] hover:bg-[#F5B0B0] spring-transition"
+      >
+        {t.nav.closeModal}
+      </button>
+    </div>
+  </div>
+</div>

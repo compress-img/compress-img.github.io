@@ -1,0 +1,342 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg-page: #F6F6F6;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #FFE2E2;
+  --accent-primary: #FFC7C7;
+  --accent-hover: #F5B0B0;
+  --accent-slate: #8785A2;
+  --text-primary: #242236;
+  --text-secondary: #575570;
+  --border: #EAD6D6;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --bg-page: #14131D;
+  --bg-card: #1E1C2B;
+  --bg-subtle: #2A273B;
+  --accent-primary: #FFC7C7;
+  --accent-hover: #FFE2E2;
+  --accent-slate: #8785A2;
+  --text-primary: #F6F6F6;
+  --text-secondary: #C5C3D6;
+  --border: #322F45;
+}
+
+@layer base {
+  html {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans", "Microsoft YaHei", sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: clip;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-slate);
+    outline-offset: 2px;
+  }
+
+  :root.dark :focus-visible {
+    outline-color: var(--accent-primary);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Smooth GPU-accelerated transitions & micro-animations */
+.spring-transition {
+  transition-property: transform, opacity, background-color, border-color, box-shadow;
+  transition-duration: 280ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.spring-hover {
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), background-color 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.spring-hover:hover {
+  transform: translateY(-2px);
+}
+
+.spring-hover:active {
+  transform: translateY(0) scale(0.985);
+}
+
+@keyframes pulseRing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spinSmooth {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes progressSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes heroImageCompress {
+  0%, 100% {
+    transform: scale(1);
+  }
+  42%, 62% {
+    transform: scale(0.86);
+  }
+}
+
+@keyframes heroArrowInTL {
+  0%, 100% {
+    transform: translate(-4px, -4px);
+    opacity: 0.72;
+  }
+  42%, 62% {
+    transform: translate(3px, 3px);
+    opacity: 1;
+  }
+}
+
+@keyframes heroArrowInTR {
+  0%, 100% {
+    transform: translate(4px, -4px);
+    opacity: 0.72;
+  }
+  42%, 62% {
+    transform: translate(-3px, 3px);
+    opacity: 1;
+  }
+}
+
+@keyframes heroArrowInBL {
+  0%, 100% {
+    transform: translate(-4px, 4px);
+    opacity: 0.72;
+  }
+  42%, 62% {
+    transform: translate(3px, -3px);
+    opacity: 1;
+  }
+}
+
+@keyframes heroArrowInBR {
+  0%, 100% {
+    transform: translate(4px, 4px);
+    opacity: 0.72;
+  }
+  42%, 62% {
+    transform: translate(-3px, -3px);
+    opacity: 1;
+  }
+}
+
+@keyframes heroFloatLeft {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(-10deg);
+  }
+  50% {
+    transform: translate3d(-2px, -5px, 0) rotate(-7deg);
+  }
+}
+
+@keyframes heroFloatRight {
+  0%, 100% {
+    transform: translate3d(0, -3px, 0) rotate(10deg);
+  }
+  50% {
+    transform: translate3d(2px, 3px, 0) rotate(7deg);
+  }
+}
+
+@keyframes heroShineSweep {
+  0%, 38% {
+    transform: translateX(-140%) skewX(-20deg);
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.75;
+  }
+  72%, 100% {
+    transform: translateX(240%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.animate-hero-compress {
+  animation: heroImageCompress 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform;
+}
+
+.animate-hero-arrow-tl {
+  animation: heroArrowInTL 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-hero-arrow-tr {
+  animation: heroArrowInTR 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-hero-arrow-bl {
+  animation: heroArrowInBL 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-hero-arrow-br {
+  animation: heroArrowInBR 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-hero-float-left {
+  animation: heroFloatLeft 4.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform;
+}
+
+.animate-hero-float-right {
+  animation: heroFloatRight 4.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform;
+}
+
+.animate-hero-shine {
+  animation: heroShineSweep 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-fade-up {
+  animation: fadeSlideUp 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-spin-smooth {
+  animation: spinSmooth 0.9s linear infinite;
+}
+
+.animate-progress-bar {
+  animation: progressSlide 1.3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+/* Transparency checkerboard preview */
+.checkerboard-bg {
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(45deg, #f0ecec 25%, transparent 25%),
+    linear-gradient(-45deg, #f0ecec 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f0ecec 75%),
+    linear-gradient(-45deg, transparent 75%, #f0ecec 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+:root.dark .checkerboard-bg {
+  background-color: #181623;
+  background-image:
+    linear-gradient(45deg, #232033 25%, transparent 25%),
+    linear-gradient(-45deg, #232033 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #232033 75%),
+    linear-gradient(-45deg, transparent 75%, #232033 75%);
+}
+
+/* Custom Range Slider */
+input[type="range"].rose-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+input[type="range"].rose-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  border: 2.5px solid #242236;
+  box-shadow: 0 3px 10px rgba(36, 34, 54, 0.22);
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), background-color 180ms ease;
+}
+
+input[type="range"].rose-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: var(--accent-hover);
+}
+
+input[type="range"].rose-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  border: 2.5px solid #242236;
+  box-shadow: 0 3px 10px rgba(36, 34, 54, 0.22);
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .spring-transition,
+  .spring-hover,
+  .animate-pulse-ring,
+  .animate-hero-compress,
+  .animate-hero-arrow-tl,
+  .animate-hero-arrow-tr,
+  .animate-hero-arrow-bl,
+  .animate-hero-arrow-br,
+  .animate-hero-float-left,
+  .animate-hero-float-right,
+  .animate-hero-shine,
+  .animate-fade-up,
+  .animate-progress-bar {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

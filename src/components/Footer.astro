@@ -1,0 +1,84 @@
+---
+import { getLocalizedPath, SUPPORTED_LOCALES, type LocaleCode, type PageRouteKey } from '../i18n/locales';
+import type { TranslationBundle } from '../i18n/translations';
+
+interface Props {
+  locale: LocaleCode;
+  routeKey: PageRouteKey;
+  t: TranslationBundle;
+}
+
+const { locale, routeKey, t } = Astro.props;
+---
+
+<footer class="mt-auto border-t border-line bg-card/80">
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2.5">
+          <svg width="26" height="26" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="16" fill="#FFC7C7" />
+            <rect x="6" y="6" width="52" height="52" rx="12" fill="#FFFFFF" stroke="#242236" stroke-width="2.5" />
+            <rect x="16" y="16" width="32" height="32" rx="6" fill="#FFE2E2" stroke="#242236" stroke-width="2.5" />
+            <circle cx="25" cy="25" r="3" fill="#242236" />
+            <path d="M18 41L26.5 32.5C27.3 31.7 28.6 31.7 29.4 32.5L34 37L38.5 32.5C39.3 31.7 40.6 31.7 41.4 32.5L46 37V42C46 43.1 45.1 44 44 44H20C18.9 44 18 43.1 18 42V41Z" fill="#8785A2" />
+          </svg>
+          <span class="font-bold tracking-tight text-ink">{t.nav.brandName}</span>
+          <span class="rounded-full bg-[#FFE2E2] px-2.5 py-0.5 text-xs font-semibold text-[#242236]">MIT</span>
+        </div>
+        <p class="text-sm text-inkmuted">{t.footer.tagline}</p>
+        <p class="text-xs text-inkmuted">{t.footer.privacyStatement}</p>
+      </div>
+
+      <nav aria-label="Footer navigation" class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+        <a href={getLocalizedPath(locale, 'home')} class="text-inkmuted hover:text-ink transition-colors">
+          {t.nav.home}
+        </a>
+        <a href={getLocalizedPath(locale, 'howToUse')} class="text-inkmuted hover:text-ink transition-colors">
+          {t.nav.howToUse}
+        </a>
+        <a href={getLocalizedPath(locale, 'hireMe')} class="text-inkmuted hover:text-ink transition-colors">
+          {t.nav.hireMe}
+        </a>
+        <a
+          href="https://kisharadilshan.gumroad.com/coffee"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-inkmuted hover:text-ink transition-colors"
+        >
+          {t.footer.supportLink}
+        </a>
+        <a
+          href="https://github.com/compress-img/compress-img.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-inkmuted hover:text-ink transition-colors"
+        >
+          {t.footer.openSourceLink}
+        </a>
+      </nav>
+    </div>
+
+    <div class="mt-6 flex flex-col gap-3 border-t border-line pt-5 text-xs text-inkmuted sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        © 2026 <a href={getLocalizedPath(locale, 'hireMe')} class="font-semibold text-ink hover:underline">{t.footer.builtBy}</a>
+      </p>
+      <div class="flex flex-wrap items-center gap-2">
+        {SUPPORTED_LOCALES.map((loc) => (
+          <a
+            href={getLocalizedPath(loc.code, routeKey)}
+            lang={loc.code}
+            class:list={[
+              'rounded-md px-2 py-1 transition-colors',
+              loc.code === locale
+                ? 'bg-[#FFC7C7] font-bold text-[#242236]'
+                : 'text-inkmuted hover:bg-subtle hover:text-ink',
+            ]}
+          >
+            {loc.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>
